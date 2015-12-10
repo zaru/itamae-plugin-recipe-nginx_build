@@ -19,6 +19,12 @@ nginx_modules = node[:nginx_build][:modules] if node[:nginx_build] && node[:ngin
 configure_path = '/usr/local/nginx_build/configure.sh'
 configure_path = node[:nginx_build][:configure_path] if node[:nginx_build] && node[:nginx_build][:configure_path]
 
+modules3rd_path = '/usr/local/nginx_build/modules3rd.ini'
+modules3rd_path = node[:nginx_build][:modules3rd_path] if node[:nginx_build] && node[:nginx_build][:modules3rd_path]
+
+nginx_modules3rds = %w()
+nginx_modules3rds = node[:nginx_build][:modules3rds] if node[:nginx_build] && node[:nginx_build][:modules3rds]
+
 if configure_path =~ /^(.+)\/([^\/]+)$/
   directory $1
 
@@ -39,7 +45,27 @@ EOS
 
   execute 'add configure script' do
     command "echo '#{configure}' >> #{configure_path}"
-    not_if "test -e #{configure_path}"
+  end
+
+end
+
+if modules3rd_path =~ /^(.+)\/([^\/]+)$/
+  directory $1
+
+  configure = ""
+
+  nginx_modules3rds.each do |m|
+    configure += <<-EOS
+[#{m[:name]}]
+form=git
+url=#{m[:url]}
+rev=#{m[:tag]}
+
+EOS
+  end
+
+  execute 'add configure script' do
+    command "echo '#{configure}' >> #{modules3rd_path}"
   end
 
 end
