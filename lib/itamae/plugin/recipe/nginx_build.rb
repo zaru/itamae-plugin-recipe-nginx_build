@@ -1,13 +1,13 @@
 require "itamae/plugin/recipe/nginx_build/version"
 
 nginx_build_platform = "linux"
-nginx_build_platform = node[:nginx_build][:platform] if node[:nginx_build][:platform]
+nginx_build_platform = node[:nginx_build][:platform] if node[:nginx_build] && node[:nginx_build][:platform]
 
 nginx_build_version = "0.6.4"
-nginx_build_version = node[:nginx_build][:version] if node[:nginx_build][:version]
+nginx_build_version = node[:nginx_build][:version] if node[:nginx_build] && node[:nginx_build][:version]
 
 nginx_build_bin = "/usr/local/bin/"
-nginx_build_bin = node[:nginx_build][:bin] if node[:nginx_build][:bin]
+nginx_build_bin = node[:nginx_build][:bin] if node[:nginx_build] && node[:nginx_build][:bin]
 
 %w(pcre pcre-devel).each do |pkg|
   package pkg
