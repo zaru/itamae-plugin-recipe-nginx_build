@@ -30,7 +30,7 @@ if configure_path =~ /^(.+)\/([^\/]+)$/
   --group=#{nginx_group} \
   --sbin-path=#{nginx_sbin} \
   --conf-path=#{nginx_conf} \
-  --pid-path=#{nginx_pid}
+  --pid-path=#{nginx_pid} \
 EOS
 
   nginx_modules.each do |m|
