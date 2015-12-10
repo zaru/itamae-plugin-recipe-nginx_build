@@ -2,19 +2,19 @@ nginx_build_bin = "/usr/local/bin/"
 nginx_build_bin = node[:nginx_build][:bin] if node[:nginx_build] && node[:nginx_build][:bin]
 
 nginx_user = "nginx"
-nginx_user = node[:nginx_build][:user] if node[:nginx_build] && node[:nginx_build][:user]
+nginx_user = node[:nginx_build][:nginx_user] if node[:nginx_build] && node[:nginx_build][:nginx_user]
 
 nginx_group = "nginx"
-nginx_group = node[:nginx_build][:group] if node[:nginx_build] && node[:nginx_build][:group]
+nginx_group = node[:nginx_build][:nginx_group] if node[:nginx_build] && node[:nginx_build][:nginx_group]
 
 nginx_sbin = "/usr/sbin/nginx"
-nginx_sbin = node[:nginx_build][:sbin] if node[:nginx_build] && node[:nginx_build][:sbin]
+nginx_sbin = node[:nginx_build][:nginx_sbin] if node[:nginx_build] && node[:nginx_build][:nginx_sbin]
 
 nginx_conf = "/etc/nginx/nginx.conf"
-nginx_conf = node[:nginx_build][:conf] if node[:nginx_build] && node[:nginx_build][:conf]
+nginx_conf = node[:nginx_build][:nginx_conf] if node[:nginx_build] && node[:nginx_build][:nginx_conf]
 
 nginx_pid = "/var/run/nginx.pid"
-nginx_pid = node[:nginx_build][:pid] if node[:nginx_build] && node[:nginx_build][:pid]
+nginx_pid = node[:nginx_build][:nginx_pid] if node[:nginx_build] && node[:nginx_build][:nginx_pid]
 
 nginx_modules = %w(http_ssl_module)
 nginx_modules = node[:nginx_build][:modules] if node[:nginx_build] && node[:nginx_build][:modules]
@@ -29,7 +29,7 @@ nginx_modules3rds = []
 nginx_modules3rds = node[:nginx_build][:modules3rds] if node[:nginx_build] && node[:nginx_build][:modules3rds]
 
 nginx_version = "1.8.0"
-nginx_version = node[:nginx_build][:version] if node[:nginx_build] && node[:nginx_build][:version]
+nginx_version = node[:nginx_build][:nginx_version] if node[:nginx_build] && node[:nginx_build][:nginx_version]
 
 if configure_path =~ /^(.+)\/([^\/]+)$/
   directory $1

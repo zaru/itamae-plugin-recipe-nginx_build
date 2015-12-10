@@ -1,8 +1,6 @@
-# Itamae::Plugin::Recipe::Nginx::Build
+# Itamae::Plugin::Recipe::NginxBuild
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/itamae/plugin/recipe/nginx/build`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Itamae recipe plugin for nginx-build
 
 ## Installation
 
@@ -22,13 +20,39 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Install
 
-## Development
+```ruby
+include_recipe "nginx_build"
+include_recipe "nginx_build::install"
+```
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+### Option
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+all parameter is optional.
+
+```yaml
+nginx_build:
+  platform: linux ( or darwin )
+  version: 0.6.4
+  bin: /usr/local/bin/
+  nginx_version: 1.8.0
+  nginx_user: nginx
+  nginx_group: nginx
+  nginx_sbin: /usr/sbin/nginx
+  nginx_conf: /etc/nginx/nginx.conf
+  nginx_pid: /var/run/nginx.pid
+  modules:
+    - http_ssl_module
+  modules3rds:
+    -
+      name: ngx_cache_purge
+      form: git
+      url: https://github.com/FRiCKLE/ngx_cache_purge.git
+      rev: 2.3
+  configure_path: /usr/local/nginx_build/configure.sh
+  modules3rd_path: /usr/local/nginx_build/modules3rd.ini
+```
 
 ## Contributing
 
