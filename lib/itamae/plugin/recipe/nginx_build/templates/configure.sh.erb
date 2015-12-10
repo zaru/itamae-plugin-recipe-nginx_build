@@ -1,0 +1,11 @@
+#!/bin/sh
+
+./configure \
+    --user=<%=@nginx_user%> \
+    --group=<%=@nginx_group%> \
+    --sbin-path=<%=@nginx_sbin%> \
+    --conf-path=<%=@nginx_conf%> \
+    --pid-path=<%=@nginx_pid%> \
+<% @nginx_modules.each do |m| %>
+    --with-<%=m%> \
+<% end %>

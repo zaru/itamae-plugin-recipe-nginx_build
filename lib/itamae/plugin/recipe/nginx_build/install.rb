@@ -28,23 +28,16 @@ nginx_modules3rds = node[:nginx_build][:modules3rds] if node[:nginx_build] && no
 if configure_path =~ /^(.+)\/([^\/]+)$/
   directory $1
 
-  configure = <<-EOS
-#!/bin/sh
-
-./configure \
-  --user=#{nginx_user} \
-  --group=#{nginx_group} \
-  --sbin-path=#{nginx_sbin} \
-  --conf-path=#{nginx_conf} \
-  --pid-path=#{nginx_pid} \
-EOS
-
-  nginx_modules.each do |m|
-    configure += " --with-#{m} "
-  end
-
-  execute 'add configure script' do
-    command "echo '#{configure}' >> #{configure_path}"
+  template configure_path do
+    source "./templates/configure.sh.erb"
+    variables({
+                  "nginx_user"    => nginx_user,
+                  "nginx_group"   => nginx_group,
+                  "nginx_sbin"    => nginx_sbin,
+                  "nginx_conf"    => nginx_conf,
+                  "nginx_pid"     => nginx_pid,
+                  "nginx_modules" => nginx_modules
+              })
   end
 
 end
@@ -52,20 +45,11 @@ end
 if modules3rd_path =~ /^(.+)\/([^\/]+)$/
   directory $1
 
-  configure = ""
-
-  nginx_modules3rds.each do |m|
-    configure += <<-EOS
-[#{m[:name]}]
-form=git
-url=#{m[:url]}
-rev=#{m[:tag]}
-
-EOS
-  end
-
-  execute 'add configure script' do
-    command "echo '#{configure}' >> #{modules3rd_path}"
+  template modules3rd_path do
+    source "./templates/modules3rd.ini.erb"
+    variables({
+                  "nginx_modules3rds" => nginx_modules3rds
+              })
   end
 
 end
