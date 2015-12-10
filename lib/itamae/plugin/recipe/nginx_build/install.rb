@@ -22,7 +22,7 @@ configure_path = node[:nginx_build][:configure_path] if node[:nginx_build] && no
 modules3rd_path = '/usr/local/nginx_build/modules3rd.ini'
 modules3rd_path = node[:nginx_build][:modules3rd_path] if node[:nginx_build] && node[:nginx_build][:modules3rd_path]
 
-nginx_modules3rds = %w()
+nginx_modules3rds = []
 nginx_modules3rds = node[:nginx_build][:modules3rds] if node[:nginx_build] && node[:nginx_build][:modules3rds]
 
 if configure_path =~ /^(.+)\/([^\/]+)$/
