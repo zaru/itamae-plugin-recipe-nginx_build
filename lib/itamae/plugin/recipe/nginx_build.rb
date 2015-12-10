@@ -1,4 +1,4 @@
-require "itamae/plugin/recipe/nginx/build/version"
+require "itamae/plugin/recipe/nginx_build/version"
 
 nginx_build_platform = "linux"
 nginx_build_platform = node[:nginx_build][:platform] if node[:nginx_build][:platform]
