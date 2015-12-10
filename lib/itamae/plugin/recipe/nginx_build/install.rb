@@ -1,16 +1,19 @@
+nginx_build_bin = "/usr/local/bin/"
+nginx_build_bin = node[:nginx_build][:bin] if node[:nginx_build] && node[:nginx_build][:bin]
+
 nginx_user = "nginx"
 nginx_user = node[:nginx_build][:user] if node[:nginx_build] && node[:nginx_build][:user]
 
 nginx_group = "nginx"
 nginx_group = node[:nginx_build][:group] if node[:nginx_build] && node[:nginx_build][:group]
 
-nginx_sbin = "nginx"
+nginx_sbin = "/usr/sbin/nginx"
 nginx_sbin = node[:nginx_build][:sbin] if node[:nginx_build] && node[:nginx_build][:sbin]
 
-nginx_conf = "nginx"
+nginx_conf = "/etc/nginx/nginx.conf"
 nginx_conf = node[:nginx_build][:conf] if node[:nginx_build] && node[:nginx_build][:conf]
 
-nginx_pid = "nginx"
+nginx_pid = "/var/run/nginx.pid"
 nginx_pid = node[:nginx_build][:pid] if node[:nginx_build] && node[:nginx_build][:pid]
 
 nginx_modules = %w(http_ssl_module)
@@ -25,6 +28,9 @@ modules3rd_path = node[:nginx_build][:modules3rd_path] if node[:nginx_build] && 
 nginx_modules3rds = []
 nginx_modules3rds = node[:nginx_build][:modules3rds] if node[:nginx_build] && node[:nginx_build][:modules3rds]
 
+nginx_version = "1.8.0"
+nginx_version = node[:nginx_build][:version] if node[:nginx_build] && node[:nginx_build][:version]
+
 if configure_path =~ /^(.+)\/([^\/]+)$/
   directory $1
 
@@ -38,6 +44,8 @@ if configure_path =~ /^(.+)\/([^\/]+)$/
                   "nginx_pid"     => nginx_pid,
                   "nginx_modules" => nginx_modules
               })
+
+    notifies :run, 'execute[build-nginx]'
   end
 
 end
@@ -50,6 +58,30 @@ if modules3rd_path =~ /^(.+)\/([^\/]+)$/
     variables({
                   "nginx_modules3rds" => nginx_modules3rds
               })
+
+    notifies :run, 'execute[build-nginx]'
   end
 
+end
+
+execute "build-nginx" do
+  command "#{nginx_build_bin}nginx-build -d work -v #{nginx_version} -c #{configure_path} -m #{modules3rd_path}"
+  command "cd ~/work/nginx/#{nginx_version}/nginx-#{nginx_version} && sudo make install"
+  action :nothing
+end
+
+template "/etc/init.d/nginx" do
+  owner "root"
+  group "root"
+  mode "755"
+  source "./templates/init_nginx.erb"
+  variables({
+                "nginx_sbin" => nginx_sbin,
+                "nginx_conf" => nginx_conf,
+                "nginx_pid"  => nginx_pid,
+            })
+end
+
+service 'nginx' do
+  action [:enable, :start]
 end
