@@ -2,6 +2,11 @@
 [<%=m[:name]%>]
 form=<%=m[:form]%>
 url=<%=m[:url]%>
-rev=<%=m[:rev]%>
-
-<% end %>
+rev=<%=m[:rev] || 'master'%>
+<% if m[:shprov] -%>
+shprov=<%=m[:shprov]%>
+<% end -%>
+<% if m[:shprovdir] -%>
+shprovdir=<%=m[:shprovdir]%>
+<% end -%>
+<% end -%>
