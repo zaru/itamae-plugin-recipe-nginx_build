@@ -65,8 +65,8 @@ if modules3rd_path =~ /^(.+)\/([^\/]+)$/
 end
 
 execute "build-nginx" do
-  command "#{nginx_build_bin}nginx-build -d work -v #{nginx_version} -c #{configure_path} -m #{modules3rd_path}"
-  command "cd ~/work/nginx/#{nginx_version}/nginx-#{nginx_version} && sudo make install"
+  command "#{nginx_build_bin}nginx-build -d work -v #{nginx_version} -c #{configure_path} -m #{modules3rd_path} && \
+           cd ~/work/nginx/#{nginx_version}/nginx-#{nginx_version} && sudo make install"
   action :nothing
 end
 
@@ -80,8 +80,11 @@ template "/etc/init.d/nginx" do
                 "nginx_conf" => nginx_conf,
                 "nginx_pid"  => nginx_pid,
             })
+  notifies :enable, 'service[nginx]', :delayed
+  notifies :start, 'service[nginx]', :delayed
 end
 
 service 'nginx' do
   action [:enable, :start]
+  only_if "test -f #{nginx_sbin}"
 end
