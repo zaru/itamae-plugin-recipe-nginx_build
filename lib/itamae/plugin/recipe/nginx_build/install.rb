@@ -31,6 +31,9 @@ nginx_modules3rds = node[:nginx_build][:modules3rds] if node[:nginx_build] && no
 nginx_version = "1.8.0"
 nginx_version = node[:nginx_build][:nginx_version] if node[:nginx_build] && node[:nginx_build][:nginx_version]
 
+build_user = "ec2-user"
+build_user = node[:nginx_build][:build_user] if node[:nginx_build] && node[:nginx_build][:build_user]
+
 if configure_path =~ /^(.+)\/([^\/]+)$/
   directory $1
 
@@ -65,9 +68,9 @@ if modules3rd_path =~ /^(.+)\/([^\/]+)$/
 end
 
 execute "build-nginx" do
-  command "#{nginx_build_bin}nginx-build -d work -v #{nginx_version} -c #{configure_path} -m #{modules3rd_path}"
-  command "cd ~/work/nginx/#{nginx_version}/nginx-#{nginx_version} && sudo make install"
-  action :nothing
+  command "#{nginx_build_bin}nginx-build -d work -v #{nginx_version} -c #{configure_path} -m #{modules3rd_path} && cd ~/work/nginx/#{nginx_version}/nginx-#{nginx_version} && sudo make install"
+  user build_user
+  # action :nothing
 end
 
 template "/etc/init.d/nginx" do

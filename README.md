@@ -33,6 +33,7 @@ all parameter is optional.
 
 ```yaml
 nginx_build:
+  build_user: ec2-user
   platform: linux ( or darwin )
   version: 0.6.4
   bin: /usr/local/bin/
