@@ -31,7 +31,7 @@ nginx_modules3rds = node[:nginx_build][:modules3rds] if node[:nginx_build] && no
 nginx_version = "1.8.0"
 nginx_version = node[:nginx_build][:nginx_version] if node[:nginx_build] && node[:nginx_build][:nginx_version]
 
-build_user = "ec2-user"
+build_user = node[:server][:user]
 build_user = node[:nginx_build][:build_user] if node[:nginx_build] && node[:nginx_build][:build_user]
 
 if configure_path =~ /^(.+)\/([^\/]+)$/
@@ -68,9 +68,10 @@ if modules3rd_path =~ /^(.+)\/([^\/]+)$/
 end
 
 execute "build-nginx" do
-  command "#{nginx_build_bin}nginx-build -d work -v #{nginx_version} -c #{configure_path} -m #{modules3rd_path} && cd ~/work/nginx/#{nginx_version}/nginx-#{nginx_version} && sudo make install"
+  command "#{nginx_build_bin}nginx-build -d work -v #{nginx_version} -c #{configure_path} -m #{modules3rd_path} && \
+           cd ~/work/nginx/#{nginx_version}/nginx-#{nginx_version} && sudo make install"
   user build_user
-  # action :nothing
+  action :nothing
 end
 
 template "/etc/init.d/nginx" do
@@ -83,8 +84,11 @@ template "/etc/init.d/nginx" do
                 "nginx_conf" => nginx_conf,
                 "nginx_pid"  => nginx_pid,
             })
+  notifies :enable, 'service[nginx]', :delayed
+  notifies :start, 'service[nginx]', :delayed
 end
 
 service 'nginx' do
   action [:enable, :start]
+  only_if "test -f #{nginx_sbin}"
 end
