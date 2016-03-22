@@ -23,6 +23,14 @@ Or install it yourself as:
 ### Install
 
 ```ruby
+%w(
+  git
+  gcc
+  openssl-devel
+).each do |pkg|
+  package pkg
+end
+
 include_recipe "nginx_build"
 include_recipe "nginx_build::install"
 ```
@@ -51,6 +59,12 @@ nginx_build:
       form: git
       url: https://github.com/FRiCKLE/ngx_cache_purge.git
       rev: 2.3
+    -
+      name: ngx_small_light
+      form: git
+      url: https://github.com/cubicdaiya/ngx_small_light.git
+      rev: v0.6.15
+      shprov: ./setup
   configure_path: /usr/local/nginx_build/configure.sh
   modules3rd_path: /usr/local/nginx_build/modules3rd.ini
 ```
@@ -58,4 +72,3 @@ nginx_build:
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/itamae-plugin-recipe-nginx_build.
-
