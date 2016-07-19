@@ -27,6 +27,7 @@ Or install it yourself as:
   git
   gcc
   openssl-devel
+  ImageMagick-devel # ngx_small_light optional
 ).each do |pkg|
   package pkg
 end
@@ -73,4 +74,4 @@ nginx_build:
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/itamae-plugin-recipe-nginx_build.
+Bug reports and pull requests are welcome on GitHub at https://github.com/zaru/itamae-plugin-recipe-nginx_build.
