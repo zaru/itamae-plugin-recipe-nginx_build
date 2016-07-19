@@ -40,6 +40,8 @@ include_recipe "nginx_build::install"
 all parameter is optional.
 
 ```yaml
+server:
+  user: ec2-user
 nginx_build:
   build_user: ec2-user
   platform: linux ( or darwin )
