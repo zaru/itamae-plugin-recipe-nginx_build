@@ -9,8 +9,15 @@ nginx_build_version = node[:nginx_build][:version] if node[:nginx_build] && node
 nginx_build_bin = "/usr/local/bin/"
 nginx_build_bin = node[:nginx_build][:bin] if node[:nginx_build] && node[:nginx_build][:bin]
 
-%w(pcre pcre-devel).each do |pkg|
-  package pkg
+case node[:platform]
+when 'debian', 'ubuntu', 'mint'
+  %w(libpcre3 libpcre3-dev).each do |pkg|
+    package pkg
+  end
+else
+  %w(pcre pcre-devel).each do |pkg|
+    package pkg
+  end
 end
 
 execute "nginx-build install" do
