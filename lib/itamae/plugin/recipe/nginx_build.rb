@@ -11,13 +11,12 @@ nginx_build_bin = node[:nginx_build][:bin] if node[:nginx_build] && node[:nginx_
 
 case node[:platform]
 when 'debian', 'ubuntu', 'mint'
-  %w(libpcre3 libpcre3-dev).each do |pkg|
-    package pkg
-  end
+  packages = %w(libpcre3 libpcre3-dev)
 else
-  %w(pcre pcre-devel).each do |pkg|
-    package pkg
-  end
+  packages = %w(pcre pcre-devel)
+end
+packages.each do |pkg|
+  package pkg
 end
 
 execute "nginx-build install" do
