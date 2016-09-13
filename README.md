@@ -70,6 +70,11 @@ nginx_build:
       shprov: ./setup
   configure_path: /usr/local/nginx_build/configure.sh
   modules3rd_path: /usr/local/nginx_build/modules3rd.ini
+  configure_options:
+    prefix: /etc/nginx
+    error-log-path: /var/log/nginx/error.log
+    http-log-path: /var/log/nginx/access.log
+
 ```
 
 ## Contributing
