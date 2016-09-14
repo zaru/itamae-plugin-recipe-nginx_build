@@ -1,3 +1,14 @@
+def build_nginx_configure_options
+  nginx_configure_options = %w(--with-http_ssl_module)
+  if node[:nginx_build] && node[:nginx_build][:modules]
+    nginx_configure_options = node[:nginx_build][:modules].map {|mod| "--with-#{mod}" }
+  end
+  if node[:nginx_build] && node[:nginx_build][:configure_options]
+    nginx_configure_options |= node[:nginx_build][:configure_options].map {|k, v| "--#{k}=#{v}" }
+  end
+  nginx_configure_options
+end
+
 nginx_build_bin = "/usr/local/bin/"
 nginx_build_bin = node[:nginx_build][:bin] if node[:nginx_build] && node[:nginx_build][:bin]
 
@@ -16,8 +27,7 @@ nginx_conf = node[:nginx_build][:nginx_conf] if node[:nginx_build] && node[:ngin
 nginx_pid = "/var/run/nginx.pid"
 nginx_pid = node[:nginx_build][:nginx_pid] if node[:nginx_build] && node[:nginx_build][:nginx_pid]
 
-nginx_modules = %w(http_ssl_module)
-nginx_modules = node[:nginx_build][:modules] if node[:nginx_build] && node[:nginx_build][:modules]
+nginx_configure_options = build_nginx_configure_options
 
 configure_path = '/usr/local/nginx_build/configure.sh'
 configure_path = node[:nginx_build][:configure_path] if node[:nginx_build] && node[:nginx_build][:configure_path]
@@ -40,12 +50,12 @@ if configure_path =~ /^(.+)\/([^\/]+)$/
   template configure_path do
     source "./templates/configure.sh.erb"
     variables({
-                  "nginx_user"    => nginx_user,
-                  "nginx_group"   => nginx_group,
-                  "nginx_sbin"    => nginx_sbin,
-                  "nginx_conf"    => nginx_conf,
-                  "nginx_pid"     => nginx_pid,
-                  "nginx_modules" => nginx_modules
+                  "nginx_user"              => nginx_user,
+                  "nginx_group"             => nginx_group,
+                  "nginx_sbin"              => nginx_sbin,
+                  "nginx_conf"              => nginx_conf,
+                  "nginx_pid"               => nginx_pid,
+                  "nginx_configure_options" => nginx_configure_options,
               })
 
     notifies :run, 'execute[build-nginx]'
