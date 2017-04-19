@@ -9,6 +9,10 @@ def build_nginx_configure_options
   nginx_configure_options
 end
 
+def openresty?
+  node[:nginx_build] && node[:nginx_build][:build_target] && node[:nginx_build][:build_target] == 'openresty'
+end
+
 nginx_build_bin = "/usr/local/bin/"
 nginx_build_bin = node[:nginx_build][:bin] if node[:nginx_build] && node[:nginx_build][:bin]
 
@@ -38,11 +42,23 @@ modules3rd_path = node[:nginx_build][:modules3rd_path] if node[:nginx_build] && 
 nginx_modules3rds = []
 nginx_modules3rds = node[:nginx_build][:modules3rds] if node[:nginx_build] && node[:nginx_build][:modules3rds]
 
-nginx_version = "1.8.0"
-nginx_version = node[:nginx_build][:nginx_version] if node[:nginx_build] && node[:nginx_build][:nginx_version]
-
 build_user = node[:server][:user]
 build_user = node[:nginx_build][:build_user] if node[:nginx_build] && node[:nginx_build][:build_user]
+
+configure_command = "#{nginx_build_bin}nginx-build -d work -c #{configure_path} -m #{modules3rd_path}"
+work_dir = ''
+if openresty?
+  openresty_version = '1.11.2.2'
+  openresty_version = node[:nginx_build][:openresty_version] if node[:nginx_build] && node[:nginx_build][:openresty_version]
+  configure_command << " -openresty -openrestyversion #{openresty_version}"
+  work_dir = "~/work/openresty/#{openresty_version}/openresty-#{openresty_version}"
+else
+  nginx_version = '1.8.0'
+  nginx_version = node[:nginx_build][:nginx_version] if node[:nginx_build] && node[:nginx_build][:nginx_version]
+  configure_command << " -v #{nginx_version}"
+  work_dir = "~/work/nginx/#{nginx_version}/nginx-#{nginx_version}"
+end
+nginx_build_command = "#{configure_command} && cd #{work_dir} && sudo make install"
 
 if configure_path =~ /^(.+)\/([^\/]+)$/
   directory $1
@@ -78,8 +94,7 @@ if modules3rd_path =~ /^(.+)\/([^\/]+)$/
 end
 
 execute "build-nginx" do
-  command "#{nginx_build_bin}nginx-build -d work -v #{nginx_version} -c #{configure_path} -m #{modules3rd_path} && \
-           cd ~/work/nginx/#{nginx_version}/nginx-#{nginx_version} && sudo make install"
+  command nginx_build_command
   user build_user
   action :nothing
 end
