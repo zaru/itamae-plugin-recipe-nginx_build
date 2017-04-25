@@ -74,7 +74,8 @@ nginx_build:
     prefix: /etc/nginx
     error-log-path: /var/log/nginx/error.log
     http-log-path: /var/log/nginx/access.log
-
+  build_target: openresty
+  openresty_version: 1.11.2.2
 ```
 
 ## Contributing
